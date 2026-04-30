@@ -1,0 +1,8 @@
+{
+  "name": "The Living Pantry",
+  "description": "A high-end editorial recipe and ingredient management app for the modern kitchen.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
