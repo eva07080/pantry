@@ -880,13 +880,13 @@ export default function App() {
 
   const getTitle = () => {
     switch (view) {
-      case 'home': return 'The Living Pantry';
+      case 'home': return 'MY Pantry';
       case 'recipes': return '레시피 탐색';
       case 'fridge': return '내 냉장고';
       case 'profile': return '내 정보';
       case 'recipe-detail': return '레시피 상세';
       case 'scanner': return '식재료 스캔';
-      default: return 'The Living Pantry';
+      default: return 'MY Pantry';
     }
   };
 
