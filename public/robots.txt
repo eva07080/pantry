@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blaze0708.cloud/sitemap.xml
