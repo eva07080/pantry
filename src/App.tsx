@@ -31,7 +31,7 @@ import {
 
 // --- Types ---
 
-type View = 'home' | 'recipes' | 'fridge' | 'profile' | 'recipe-detail' | 'scanner';
+type View = 'home' | 'recipes' | 'fridge' | 'profile' | 'recipe-detail' | 'scanner' | 'signup';
 
 interface Recipe {
   id: string;
@@ -372,7 +372,7 @@ const Navbar = ({ currentView, setView }: { currentView: View; setView: (v: View
   );
 };
 
-const TopBar = ({ title, showBack, onBack }: { title: string; showBack?: boolean; onBack?: () => void }) => (
+const TopBar = ({ title, showBack, onBack, onUserClick }: { title: string; showBack?: boolean; onBack?: () => void; onUserClick?: () => void }) => (
   <header className="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl">
     <div className="flex justify-between items-center px-6 h-16 w-full max-w-screen-xl mx-auto">
       {showBack ? (
@@ -396,14 +396,17 @@ const TopBar = ({ title, showBack, onBack }: { title: string; showBack?: boolean
             </button>
           </>
         ) : (
-          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container">
+          <button 
+            onClick={onUserClick}
+            className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container hover:scale-105 active:scale-95 transition-all focus:outline-none cursor-pointer"
+          >
             <img 
               alt="사용자 프로필" 
               className="w-full h-full object-cover" 
               referrerPolicy="no-referrer"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuA__SezUVapSJ0kCLVeQ_9cYRN7PweZDVPFBNSjJ0eL46L1vMLnLeNCo-UnFnSMRKWwDM5ioK8EZuUlcPt7RAjpLRb1b3YjHMMqUPirb9-dC7t-f9-63kk4R6StCsrj8oHlcF4duLPM5T_LpTU7Wz0rIJ3jjFraub6LuKBH5KfmcXtZ1LlATGtGBQ1SvpuRj7GC4rwjid32RIgNCcVDXLhF1-k7xteZ2yaQFVNQuoRQxuMfz_uypMCtsrqSRWDAGCPoFXWgMPx4eNw" 
             />
-          </div>
+          </button>
         )}
       </div>
     </div>
@@ -412,7 +415,7 @@ const TopBar = ({ title, showBack, onBack }: { title: string; showBack?: boolean
 
 // --- Page Views ---
 
-const HomeView = ({ onRecipeClick, ingredients }: { onRecipeClick: (r: Recipe) => void; ingredients: Ingredient[] }) => {
+const HomeView = ({ onRecipeClick, ingredients, userName }: { onRecipeClick: (r: Recipe) => void; ingredients: Ingredient[]; userName?: string }) => {
   const expiringItems = ingredients.filter(i => i.daysLeft <= 3);
   const featuredRecipe = INITIAL_RECIPES.find(r => r.isFeatured);
 
@@ -424,7 +427,7 @@ const HomeView = ({ onRecipeClick, ingredients }: { onRecipeClick: (r: Recipe) =
       className="space-y-8 pb-32"
     >
       <section>
-        <p className="text-on-surface-variant font-medium text-sm">다시 오신 것을 환영해요, 사라님</p>
+        <p className="text-on-surface-variant font-medium text-sm">다시 오신 것을 환영해요, {userName || '사라'}님</p>
         <h2 className="text-3xl font-extrabold tracking-tight mt-1 text-on-surface">오늘의 신선 피드</h2>
       </section>
 
@@ -841,12 +844,209 @@ const RecipeDetailView = ({ recipe, onBack }: { recipe: Recipe; onBack: () => vo
   );
 };
 
+// --- Signup View ---
+
+const SignupView = ({ onSignupComplete }: { onSignupComplete: (name: string) => void }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreed, setAgreed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!name || !email || !password || !confirmPassword) {
+      setError('모든 필드를 입력해 주세요.');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    if (!agreed) {
+      setError('이용약관 및 개인정보 처리방침에 동의해 주세요.');
+      return;
+    }
+
+    setSuccess(true);
+    setTimeout(() => {
+      onSignupComplete(name);
+    }, 1500);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="max-w-md mx-auto space-y-8 pb-32"
+    >
+      <div className="text-center space-y-3">
+        <div className="w-16 h-16 bg-primary-container rounded-2xl flex items-center justify-center mx-auto text-on-primary-container shadow-md">
+          <UtensilsCrossed size={32} />
+        </div>
+        <h2 className="text-3xl font-extrabold text-on-surface tracking-tight">MY Pantry 시작하기</h2>
+        <p className="text-on-surface-variant text-sm">신선한 식재료 관리와 커스텀 레시피의 세계로 초대합니다.</p>
+      </div>
+
+      {success ? (
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-surface-container p-8 rounded-2xl text-center space-y-4"
+        >
+          <div className="w-12 h-12 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto">
+            <CheckCircle2 size={28} />
+          </div>
+          <h3 className="text-xl font-bold text-on-surface">{name}님, 환영합니다!</h3>
+          <p className="text-on-surface-variant text-sm">회원가입이 완료되었습니다.<br />잠시 후 메인 화면으로 이동합니다.</p>
+        </motion.div>
+      ) : (
+        <form onSubmit={handleSubmit} className="bg-surface-container-lowest p-8 rounded-3xl shadow-[0_8px_32px_rgba(11,54,29,0.04)] border border-outline-variant/10 space-y-6">
+          {error && (
+            <div className="p-4 bg-error-container/30 text-error border-l-4 border-error rounded-r-lg text-sm font-semibold">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">이름</label>
+            <input
+              type="text"
+              placeholder="홍길동"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-3.5 bg-surface-container rounded-xl font-medium placeholder:text-outline/40 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">이메일 주소</label>
+            <input
+              type="email"
+              placeholder="example@pantry.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3.5 bg-surface-container rounded-xl font-medium placeholder:text-outline/40 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">비밀번호</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3.5 bg-surface-container rounded-xl font-medium placeholder:text-outline/40 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">비밀번호 확인</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-3.5 bg-surface-container rounded-xl font-medium placeholder:text-outline/40 focus:ring-2 focus:ring-primary/20 outline-none transition-all text-on-surface"
+            />
+          </div>
+
+          <label className="flex items-start gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              className="mt-1 accent-primary w-4 h-4"
+            />
+            <span className="text-xs text-on-surface-variant leading-relaxed">
+              이용약관 및 개인정보 처리방침에 동의하며, 
+              마케팅 정보 및 혜택 알림 수신(선택)에 동의합니다.
+            </span>
+          </label>
+
+          <button
+            type="submit"
+            className="w-full bg-primary text-on-primary py-4 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-primary/10 hover:bg-primary-dim active:scale-95 transition-all cursor-pointer"
+          >
+            가입하기
+          </button>
+
+          <div className="relative flex py-2 items-center">
+            <div className="flex-grow border-t border-outline-variant/10"></div>
+            <span className="flex-shrink mx-4 text-xs font-bold text-outline uppercase tracking-wider">또는 간편 가입</span>
+            <div className="flex-grow border-t border-outline-variant/10"></div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              className="py-3 bg-surface-container hover:bg-surface-container-high rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-on-surface transition-colors cursor-pointer"
+            >
+              Google
+            </button>
+            <button
+              type="button"
+              className="py-3 bg-surface-container hover:bg-surface-container-high rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-on-surface transition-colors cursor-pointer"
+            >
+              Apple
+            </button>
+          </div>
+        </form>
+      )}
+    </motion.div>
+  );
+};
+
+// --- Profile View ---
+
+const ProfileView = ({ userName, onLogout }: { userName: string; onLogout: () => void }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      className="max-w-md mx-auto space-y-8 pb-32 text-center"
+    >
+      <div className="bg-surface-container-lowest p-8 rounded-3xl shadow-[0_8px_32px_rgba(11,54,29,0.04)] border border-outline-variant/10 space-y-6">
+        <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary-container mx-auto">
+          <img 
+            alt="사용자 프로필" 
+            className="w-full h-full object-cover" 
+            referrerPolicy="no-referrer"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA__SezUVapSJ0kCLVeQ_9cYRN7PweZDVPFBNSjJ0eL46L1vMLnLeNCo-UnFnSMRKWwDM5ioK8EZuUlcPt7RAjpLRb1b3YjHMMqUPirb9-dC7t-f9-63kk4R6StCsrj8oHlcF4duLPM5T_LpTU7Wz0rIJ3jjFraub6LuKBH5KfmcXtZ1LlATGtGBQ1SvpuRj7GC4rwjid32RIgNCcVDXLhF1-k7xteZ2yaQFVNQuoRQxuMfz_uypMCtsrqSRWDAGCPoFXWgMPx4eNw" 
+          />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold text-on-surface">{userName}님</h3>
+          <p className="text-on-surface-variant text-sm mt-1">이메일 계정: user@pantry.com</p>
+        </div>
+        <div className="pt-4">
+          <button
+            onClick={onLogout}
+            className="px-6 py-3 bg-error-container/20 text-error hover:bg-error-container/40 transition-colors font-bold text-sm rounded-xl cursor-pointer"
+          >
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 // --- Main App ---
 
 export default function App() {
   const [view, setView] = useState<View>('home');
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [ingredients, setIngredients] = useState<Ingredient[]>(INITIAL_INGREDIENTS);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
 
   const handleRecipeClick = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
@@ -859,22 +1059,43 @@ export default function App() {
     setView('fridge');
   };
 
+  const handleSignupComplete = (name: string) => {
+    setIsLoggedIn(true);
+    setUserName(name);
+    setView('home');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserName('');
+    setView('home');
+  };
+
   const handleBack = () => {
     if (view === 'recipe-detail') {
       setView('recipes');
     } else if (view === 'scanner') {
       setView('fridge');
+    } else if (view === 'signup') {
+      setView('home');
     }
   };
 
   const renderView = () => {
     switch (view) {
-      case 'home': return <HomeView onRecipeClick={handleRecipeClick} ingredients={ingredients} />;
+      case 'home': return <HomeView onRecipeClick={handleRecipeClick} ingredients={ingredients} userName={userName} />;
       case 'recipes': return <RecipesView onRecipeClick={handleRecipeClick} />;
       case 'fridge': return <FridgeView ingredients={ingredients} onAddClick={() => setView('scanner')} />;
-      case 'recipe-detail': return selectedRecipe ? <RecipeDetailView recipe={selectedRecipe} onBack={handleBack} /> : <HomeView onRecipeClick={handleRecipeClick} ingredients={ingredients} />;
+      case 'recipe-detail': return selectedRecipe ? <RecipeDetailView recipe={selectedRecipe} onBack={handleBack} /> : <HomeView onRecipeClick={handleRecipeClick} ingredients={ingredients} userName={userName} />;
       case 'scanner': return <ScannerView onAdd={handleAddIngredient} onCancel={() => setView('fridge')} />;
-      default: return <HomeView onRecipeClick={handleRecipeClick} ingredients={ingredients} />;
+      case 'signup': return <SignupView onSignupComplete={handleSignupComplete} />;
+      case 'profile':
+        return isLoggedIn ? (
+          <ProfileView userName={userName} onLogout={handleLogout} />
+        ) : (
+          <SignupView onSignupComplete={handleSignupComplete} />
+        );
+      default: return <HomeView onRecipeClick={handleRecipeClick} ingredients={ingredients} userName={userName} />;
     }
   };
 
@@ -883,9 +1104,10 @@ export default function App() {
       case 'home': return 'MY Pantry';
       case 'recipes': return '레시피 탐색';
       case 'fridge': return '내 냉장고';
-      case 'profile': return '내 정보';
+      case 'profile': return isLoggedIn ? '내 정보' : '회원가입';
       case 'recipe-detail': return '레시피 상세';
       case 'scanner': return '식재료 스캔';
+      case 'signup': return '회원가입';
       default: return 'MY Pantry';
     }
   };
@@ -895,8 +1117,9 @@ export default function App() {
       {view !== 'scanner' && (
         <TopBar 
           title={getTitle()} 
-          showBack={view === 'recipe-detail'} 
+          showBack={view === 'recipe-detail' || view === 'signup'} 
           onBack={handleBack} 
+          onUserClick={() => setView(isLoggedIn ? 'profile' : 'signup')}
         />
       )}
       
