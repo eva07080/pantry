@@ -384,7 +384,7 @@ const TopBar = ({ title, showBack, onBack }: { title: string; showBack?: boolean
           <Search size={24} />
         </button>
       )}
-      <h1 className="font-headline text-xl font-bold text-on-surface tracking-[-0.02em]">{title}</h1>
+      <h1 className={`font-headline font-bold text-on-surface tracking-[-0.02em] ${title === 'MY Pantry' ? 'text-4xl' : 'text-xl'}`}>{title}</h1>
       <div className="flex items-center gap-2">
         {showBack ? (
           <>
