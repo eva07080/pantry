@@ -135,6 +135,39 @@ const INITIAL_RECIPES: Recipe[] = [
     tags: ['건강식', '고단백'],
     category: '간편한 저녁'
   }
+  ,
+  {
+    id: '5',
+    title: '닭가슴살 토마토 상추 샐러드',
+    description: '유통기한 임박 재료인 닭가슴살, 토마토, 상추를 한 번에 활용하는 건강한 샐러드입니다. 15분 만에 고단백 한 끼를 완성하세요.',
+    image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800&q=80',
+    time: '15분',
+    difficulty: '초보자',
+    ingredients: [
+      { name: '닭가슴살', amount: '200g', inStock: true, icon: 'Zap' },
+      { name: '방울토마토', amount: '1컵', inStock: true, icon: 'Leaf' },
+      { name: '상추', amount: '큰 한 줌', inStock: true, icon: 'Leaf' },
+      { name: '올리브 오일', amount: '2 테이블스푼', inStock: false, icon: 'Droplets' },
+    ],
+    steps: [
+      {
+        title: '닭가슴살 익히기',
+        text: '닭가슴살에 소금, 후추로 밑간합니다. 달군 팬에 올리브 오일을 두르고 중불에서 각 면을 5~6분씩 골고루 익혀줍니다. 익힌 후 도마 위에서 2분 휴지 후 먹기 좋게 슬라이스합니다.',
+        tip: '닭가슴살을 자르기 전 잠시 두면 육즙이 빠져나가지 않아 더 촉촉합니다.'
+      },
+      {
+        title: '채소 준비하기',
+        text: '상추는 깨끗이 씻어 물기를 제거하고 손으로 먹기 좋게 뜯습니다. 방울토마토는 반으로 잘라둡니다.'
+      },
+      {
+        title: '드레싱 & 완성',
+        text: '올리브 오일 2큰술, 레몬즙 1큰술, 소금, 후추를 섞어 드레싱을 만듭니다. 그릇에 상추, 토마토를 담고 슬라이스한 닭가슴살을 올린 뒤 드레싱을 뿌려 완성합니다.'
+      },
+    ],
+    nutrition: { calories: 310, protein: '38g', carbs: '8g', fat: '14g' },
+    tags: ['고단백', '유통기한 임박'],
+    category: '간편한 저녁',
+  }
 ];
 
 const INITIAL_INGREDIENTS: Ingredient[] = [
@@ -144,6 +177,9 @@ const INITIAL_INGREDIENTS: Ingredient[] = [
   { id: '4', name: '무염 버터', description: '목초 사육', amount: '250g', expiryDate: '11월 02일', daysLeft: 15, category: '냉장', status: 'ok' },
   { id: '5', name: '유기농 당근', description: '흙당근, 잎 포함', amount: '1 묶음', expiryDate: '10월 18일', daysLeft: 5, category: '냉장', status: 'ok', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBtraolEzm2XvqVsYG4fc_kn7ynsD-fVDO5OaCFpS0D5XwEeJqullRhhMrGDbI_-v7UOBrTHGCsPh0mQyqNj1yTzuQklzCv6L6szqElUcrOUImx5xgbyPr-eApy9kk3yYzyjtbC2vWxfJu_4XDWVAYjAC72QrReBYRahNQmtB2YS4n0YMfiYJ84XI_KvIcVJCbVCmewKtSYL0sikbGxv0PqbUpaFAN664NO9C9Xvrya_OwAHvmhaYJUILR3UapMIgatIt62s3zJYYM' },
   { id: '6', name: '귀리 우유', description: '바리스타 에디션', amount: '850ml', expiryDate: '10월 09일', daysLeft: 12, category: '냉장', status: 'ok' },
+  { id: '7', name: '방울토마토', description: '잘 익은 국내산 방울토마토', amount: '300g', expiryDate: '10월 25일', daysLeft: 2, category: '냉장', status: 'warning' },
+  { id: '8', name: '상추', description: '신선한 청상추, 쌈채소로 활용하세요.', amount: '1 봉지', expiryDate: '10월 24일', daysLeft: 1, category: '냉장', status: 'error' },
+  { id: '9', name: '닭가슴살', description: '무항생제 닭가슴살, 샐러드나 볶음에 활용하세요.', amount: '400g', expiryDate: '10월 25일', daysLeft: 2, category: '냉장', status: 'warning' },
 ];
 
 // --- Components ---
