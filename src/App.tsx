@@ -1021,6 +1021,7 @@ const SignupView = ({ onSignupComplete }: { onSignupComplete: (name: string) => 
 
           <button
             type="button"
+            onClick={() => window.location.href = 'https://accounts.google.com/'}
             className="w-full py-3.5 bg-surface-container hover:bg-surface-container-high rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-on-surface transition-colors cursor-pointer"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -1042,6 +1043,16 @@ const SignupView = ({ onSignupComplete }: { onSignupComplete: (name: string) => 
               />
             </svg>
             구글로 로그인하기
+          </button>
+          <button
+            type="button"
+            onClick={() => window.location.href = 'https://accounts.kakao.com/'}
+            className="w-full py-3.5 bg-[#FEE500] hover:bg-[#FEE500]/90 rounded-xl font-bold text-xs flex items-center justify-center gap-2 text-[#191919] transition-colors cursor-pointer mt-2"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.553 1.706 4.8 4.315 6.037l-.872 3.197c-.085.31.25.568.514.394l3.774-2.483A10.15 10.15 0 0012 17.23c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/>
+            </svg>
+            카카오로 로그인하기
           </button>
         </form>
       )}
